@@ -18,10 +18,21 @@
  * Todas sao threads preemptivas (prioridade >= 0).
  */
 
+/* Compativel com o Zephyr do PlatformIO (2.7, includes sem "zephyr/")
+ * e com versoes novas (3.x/4.x, includes com "zephyr/"). */
+#if __has_include(<zephyr/kernel.h>)
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/sys/printk.h>
+#define MAIN_RETORNA_INT 1
+#else
+#include <kernel.h>
+#include <device.h>
+#include <drivers/i2c.h>
+#include <sys/printk.h>
+#define MAIN_RETORNA_INT 0
+#endif
 
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))
 #include <string.h>
@@ -186,6 +197,7 @@ static void t_integracao(void *p1, void *p2, void *p3)
 	struct amostra s;
 	float a0[3] = {0}, a1[3] = {0};   /* a[n-2], a[n-1] */
 	float v0[3] = {0}, v1[3] = {0};   /* v[n-2], v[n-1] */
+	(void)a0; (void)v0;               /* so usados no modo Simpson */
 	float v[3] = {0}, p[3] = {0};
 	int parado = 0;
 	uint32_t n = 0;
@@ -295,8 +307,14 @@ K_THREAD_DEFINE(id_aq,  PILHA_AQ,  t_aquisicao,  NULL, NULL, NULL, PRIO_AQ,  0, 
 K_THREAD_DEFINE(id_int, PILHA_INT, t_integracao, NULL, NULL, NULL, PRIO_INT, 0, 0);
 K_THREAD_DEFINE(id_tx,  PILHA_TX,  t_serial,     NULL, NULL, NULL, PRIO_TX,  0, 0);
 
+/* Toda a aplicacao roda nas threads acima; main pode terminar. */
+#if MAIN_RETORNA_INT
 int main(void)
 {
-	/* Toda a aplicacao roda nas threads acima; main pode terminar. */
 	return 0;
 }
+#else
+void main(void)
+{
+}
+#endif

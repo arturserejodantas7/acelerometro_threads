@@ -95,7 +95,7 @@ def figura(caminho, legenda, largura=16 * cm):
 el.append(Paragraph("Atividade Acelerômetro – Serial com Threads", H1))
 p("Microcontroladores 2 (PSI) – Escola Politécnica da USP<br/>"
   "Aluno: Artur Serejo Dantas – Nº USP 15441730<br/>"
-  "Placa: FRDM-KL25Z · Sensor: MMA8451Q (I²C0, 0x1D) · RTOS: Zephyr")
+  "Placa: FRDM-KL25Z · Sensor: MMA8451Q (I²C0, 0x1D) · RTOS: Zephyr (via PlatformIO)")
 el.append(Paragraph(f"Repositório: <link href='{args.repo}' color='blue'>{escape(args.repo)}</link> – branch <b>{BRANCH}</b>", ParagraphStyle("esq", parent=P, alignment=0)))
 
 # ---------------- Arquitetura ----------------
@@ -178,7 +178,7 @@ p("Fluxo de captura: <font face='%s'>" % MONO + "python python/leitor_serial.py 
 # ---------------- Codigo ----------------
 el.append(PageBreak())
 el.append(Paragraph("5. Código-fonte", H2))
-for arq in ["src/main.c", "prj.conf", "CMakeLists.txt", "python/leitor_serial.py", "python/graficos.py"]:
+for arq in ["src/main.c", "platformio.ini", "zephyr/prj.conf", "zephyr/CMakeLists.txt", "python/leitor_serial.py", "python/graficos.py"]:
     codigo(arq)
 
 
